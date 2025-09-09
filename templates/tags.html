@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN" 
+      th:lang="${#locale.language}" 
+      th:replace="~{layout/base :: html(
+        siteTitle='标签 - ' + ${site.title},
+        metaDescription='浏览 ' + ${site.title} + ' 的所有文章标签',
+        metaKeywords='标签,文章标签,' + ${site.title},
+        metaImage=${site.logo ?: '/themes/akina-zzz/assets/img/og-image.png'},
+        bodyClass='tags-page',
+        contentFragment=~{:: content}
+      )}">
+
+<!-- 标签页面内容 -->
+<th:block th:fragment="content">
+    
+    <!-- 页面标题 -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-dark-800 mb-4">文章标签</h1>
+        <p class="text-dark-500">
+            共 <span th:text="${tags.size()}" class="font-medium text-accent">0</span> 个标签，
+            <span th:text="${posts.totalElements}" class="font-medium text-accent">0</span> 篇文章
+        </p>
+    </div>
+    
+    <!-- 标签云 -->
+    <div class="mb-12">
+        <h2 class="text-xl font-semibold text-dark-800 mb-6">标签云</h2>
+        <div class="flex flex-wrap gap-3">
+            <a th:each="tag : ${tags}" 
+               th:href="@{'/tags/' + ${tag.metadata.name}}"
+               th:class="|tag hover:bg-accent/20 hover:text-accent transition-all duration-200 text-${@themeUtils.getTagSize(tag.status.postCount)}|"
+               th:style="|font-size: ${@themeUtils.getTagFontSize(tag.status.postCount)};|"
+               th:title="${tag.status.postCount} + ' 篇文章'">
+                <span th:text="'#' + ${tag.spec.displayName}">#标签</span>
+                <span class="ml-1 text-xs opacity-60" th:text="${tag.status.postCount}">0</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- 热门标签 -->
+    <div class="mb-12" th:if="${popularTags}">
+        <h2 class="text-xl font-semibold text-dark-800 mb-6">热门标签</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a th:each="tag : ${popularTags}" 
+               th:href="@{'/tags/' + ${tag.metadata.name}}"
+               class="group flex items-center space-x-3 p-4 bg-dark-100 rounded-xl hover:bg-dark-200 transition-all duration-200">
+                <div class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center group-hover:bg-accent/30 transition-colors duration-200">
+                    <span class="text-accent font-bold text-sm">#</span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-medium text-dark-800 group-hover:text-accent transition-colors duration-200"
+                        th:text="${tag.spec.displayName}">
+                        标签名称
+                    </h3>
+                    <p class="text-sm text-dark-500" 
+                       th:text="${tag.status.postCount} + ' 篇文章'">
+                        0 篇文章
+                    </p>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- 如果有选中的标签，显示该标签的文章 -->
+    <div th:if="${selectedTag}">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-dark-800">
+                标签: <span class="text-accent" th:text="'#' + ${selectedTag.spec.displayName}">#标签</span>
+                <span class="text-lg font-normal text-dark-500">
+                    (<span th:text="${posts.totalElements}">0</span>)
+                </span>
+            </h2>
+            
+            <a th:href="@{/tags}" class="pill-btn-secondary">
+                查看所有标签
+            </a>
+        </div>
+        
+        <!-- 标签描述 -->
+        <div th:if="${selectedTag.spec.description}" 
+             class="mb-8 p-4 bg-dark-100 rounded-xl">
+            <p class="text-dark-600" th:text="${selectedTag.spec.description}">标签描述</p>
+        </div>
+        
+        <!-- 相关标签 -->
+        <div th:if="${relatedTags}" class="mb-8">
+            <p class="text-sm font-medium text-dark-500 mb-3">相关标签:</p>
+            <div class="flex flex-wrap gap-2">
+                <a th:each="relatedTag : ${relatedTags}" 
+                   th:href="@{'/tags/' + ${relatedTag.metadata.name}}"
+                   class="tag hover:bg-accent/20 hover:text-accent transition-colors duration-200">
+                    <span th:text="'#' + ${relatedTag.spec.displayName}">#相关标签</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 文章瀑布流 -->
+        <div id="masonry-container" class="masonry-container">
+            <div th:each="post : ${posts.content}" 
+                 th:replace="~{_fragments/card :: postCard(post=${post}, index=${postStat.index})}">
+            </div>
+        </div>
+        
+        <!-- 分页 -->
+        <div th:if="${posts.hasNext()}" class="mt-12">
+            <div class="flex justify-center">
+                <a th:href="@{'/tags/' + ${selectedTag.metadata.name} + '?page=' + ${posts.number + 2}}" 
+                   class="pill-btn-primary">
+                    加载更多文章
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 标签统计 -->
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-dark-100 rounded-xl p-6 text-center">
+            <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-dark-800" th:text="${tags.size()}">0</h3>
+            <p class="text-sm text-dark-500">个标签</p>
+        </div>
+        
+        <div class="bg-dark-100 rounded-xl p-6 text-center">
+            <div class="w-12 h-12 bg-brand/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-dark-800" th:text="${totalPosts ?: 0}">0</h3>
+            <p class="text-sm text-dark-500">篇文章</p>
+        </div>
+        
+        <div class="bg-dark-100 rounded-xl p-6 text-center">
+            <div class="w-12 h-12 bg-danger/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-dark-800" th:text="${@themeUtils.getMostPopularTag()?.status?.postCount ?: 0}">0</h3>
+            <p class="text-sm text-dark-500">最热标签文章数</p>
+        </div>
+    </div>
+    
+    <!-- 无标签状态 -->
+    <div th:if="${#lists.isEmpty(tags)}" 
+         class="text-center py-16">
+        <div class="w-24 h-24 mx-auto mb-6 text-dark-300">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-full h-full">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" 
+                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+            </svg>
+        </div>
+        <h2 class="text-xl font-medium text-dark-700 mb-2">暂无标签</h2>
+        <p class="text-dark-500">还没有创建任何文章标签</p>
+    </div>
+</th:block>
+
+<!-- 页面脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 初始化瀑布流（如果有文章列表）
+    const container = document.getElementById('masonry-container');
+    if (container && window.AkinaZZZ?.modules?.masonry) {
+        window.AkinaZZZ.modules.masonry.init(container);
+    }
+    
+    // 标签云动态效果
+    const tagCloud = document.querySelector('.flex-wrap');
+    if (tagCloud) {
+        // 为标签添加随机延迟动画
+        const tags = tagCloud.querySelectorAll('a');
+        tags.forEach((tag, index) => {
+            tag.style.animationDelay = `${index * 50}ms`;
+            tag.classList.add('animate-fade-in');
+        });
+    }
+});
+</script>
+
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN" 
+      th:lang="${#locale.language}" 
+      th:replace="~{layout/base :: html(
+        siteTitle=${site.title + ' - ' + (site.subtitle ?: '深色系瀑布流主题')},
+        metaDescription=${site.subtitle ?: '深色系瀑布流主题，专为内容展示和交互优化设计'},
+        metaKeywords=${site.keywords ?: 'Halo,博客,主题,瀑布流'},
+        metaImage=${site.logo ?: '/themes/akina-zzz/assets/img/og-image.png'},
+        bodyClass='index-page',
+        contentFragment=~{:: content}
+      )}">
+
+<!-- 首页内容区域 -->
+<th:block th:fragment="content">
+    
+    <!-- 筛选栏 -->
+    <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-2xl font-bold text-dark-800">
+                <span th:text="${activeTab ?: '推荐'}">推荐</span>
+            </h1>
+            <div class="text-sm text-dark-500">
+                共 <span th:text="${posts.totalElements}" class="font-medium text-accent">0</span> 篇文章
+            </div>
+        </div>
+        
+        <!-- 视图切换和筛选 -->
+        <div class="flex items-center space-x-3">
+            <!-- 密度调节 -->
+            <div class="hidden sm:flex items-center space-x-2" 
+                 x-data="{ density: 'normal' }">
+                <button x-on:click="density = 'loose'; $dispatch('density-change', 'loose')"
+                        x-bind:class="{ 'bg-accent text-dark-0': density === 'loose', 'bg-dark-100 text-dark-600': density !== 'loose' }"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200"
+                        title="宽松">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                    </svg>
+                </button>
+                <button x-on:click="density = 'normal'; $dispatch('density-change', 'normal')"
+                        x-bind:class="{ 'bg-accent text-dark-0': density === 'normal', 'bg-dark-100 text-dark-600': density !== 'normal' }"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200"
+                        title="正常">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <button x-on:click="density = 'tight'; $dispatch('density-change', 'tight')"
+                        x-bind:class="{ 'bg-accent text-dark-0': density === 'tight', 'bg-dark-100 text-dark-600': density !== 'tight' }"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200"
+                        title="紧凑">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18M3 8h18M3 12h18M3 16h18M3 20h18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- 排序选择 -->
+            <div class="relative" x-data="{ open: false, sort: '最新' }">
+                <button x-on:click="open = !open"
+                        class="flex items-center space-x-2 px-4 py-2 bg-dark-100 hover:bg-dark-200 text-dark-600 rounded-xl transition-all duration-200">
+                    <span x-text="sort" class="text-sm font-medium">最新</span>
+                    <svg class="w-4 h-4 transform transition-transform duration-200" 
+                         x-bind:class="{ 'rotate-180': open }">
+                        <path fill="none" stroke="currentColor" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <div x-show="open" 
+                     x-transition
+                     x-on:click.away="open = false"
+                     class="absolute right-0 top-full mt-2 w-32 bg-dark-50 rounded-xl shadow-modal border border-dark-200 py-2 z-10">
+                    <button x-on:click="sort = '最新'; open = false; $dispatch('sort-change', 'latest')"
+                            class="w-full px-4 py-2 text-left text-sm text-dark-600 hover:text-dark-800 hover:bg-dark-100 transition-colors">
+                        最新
+                    </button>
+                    <button x-on:click="sort = '最热'; open = false; $dispatch('sort-change', 'popular')"
+                            class="w-full px-4 py-2 text-left text-sm text-dark-600 hover:text-dark-800 hover:bg-dark-100 transition-colors">
+                        最热
+                    </button>
+                    <button x-on:click="sort = '随机'; open = false; $dispatch('sort-change', 'random')"
+                            class="w-full px-4 py-2 text-left text-sm text-dark-600 hover:text-dark-800 hover:bg-dark-100 transition-colors">
+                        随机
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 瀑布流内容区域 -->
+    <div id="masonry-container" 
+         class="masonry-container"
+         x-data="{ density: 'normal' }"
+         x-bind:class="{
+           'gap-4': density === 'tight',
+           'gap-6': density === 'normal', 
+           'gap-8': density === 'loose'
+         }"
+         x-on:density-change.window="density = $event.detail">
+        
+        <!-- 文章卡片列表 -->
+        <div th:each="post, iterStat : ${posts.content}" 
+             th:replace="~{_fragments/card :: postCard(post=${post}, index=${iterStat.index})}">
+        </div>
+        
+        <!-- 品牌卡片（每10个文章卡片后插入一个） -->
+        <div th:if="${iterStat.count % 10 == 5 and @themeService.getSetting('showBrandCards')}"
+             th:replace="~{_fragments/card :: brandCard}">
+        </div>
+    </div>
+    
+    <!-- 空状态 -->
+    <div th:if="${#lists.isEmpty(posts.content)}" 
+         class="text-center py-16">
+        <div class="w-24 h-24 mx-auto mb-6 text-dark-300">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-full h-full">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" 
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+        </div>
+        <h2 class="text-xl font-medium text-dark-700 mb-2">暂无内容</h2>
+        <p class="text-dark-500 mb-6">这里还没有发布任何文章</p>
+        <a th:href="@{/admin/posts/new}" 
+           class="pill-btn-primary">
+            创建第一篇文章
+        </a>
+    </div>
+    
+    <!-- 加载更多 -->
+    <div th:unless="${#lists.isEmpty(posts.content)}">
+        <!-- 无限滚动加载触发器 -->
+        <div id="infinite-scroll-trigger" 
+             class="flex items-center justify-center py-8"
+             th:data-next-page="${posts.number + 1}"
+             th:data-has-next="${posts.hasNext()}"
+             th:data-total-pages="${posts.totalPages}">
+            
+            <!-- 加载中状态 -->
+            <div id="loading-indicator" 
+                 class="hidden flex items-center space-x-2 text-dark-500">
+                <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <span>加载中...</span>
+            </div>
+            
+            <!-- 手动加载按钮（降级方案） -->
+            <button id="load-more-btn" 
+                    th:unless="${!posts.hasNext()}"
+                    class="pill-btn-secondary">
+                加载更多
+            </button>
+            
+            <!-- 已到底部 -->
+            <div th:if="${!posts.hasNext()}" 
+                 class="text-dark-500 text-sm">
+                已经到底部了 ~
+            </div>
+        </div>
+    </div>
+    
+    <!-- 骨架屏（初始加载时显示） -->
+    <div id="skeleton-cards" 
+         class="masonry-container hidden" 
+         th:replace="~{_fragments/skeleton :: cardSkeletons(count=6)}">
+    </div>
+</th:block>
+
+<!-- 页面特定脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 初始化瀑布流
+    if (window.AkinaZZZ?.modules?.masonry) {
+        window.AkinaZZZ.modules.masonry.init('#masonry-container');
+    }
+    
+    // 初始化无限滚动
+    if (window.AkinaZZZ?.modules?.infinite) {
+        window.AkinaZZZ.modules.infinite.init('#infinite-scroll-trigger', {
+            loadMoreBtn: '#load-more-btn',
+            loadingIndicator: '#loading-indicator',
+            container: '#masonry-container'
+        });
+    }
+    
+    // 监听筛选事件
+    document.addEventListener('sort-change', (e) => {
+        const sortType = e.detail;
+        console.log('Sort changed to:', sortType);
+        
+        // 这里可以实现排序逻辑
+        // 例如：重新请求数据或重新排序现有数据
+        if (window.AkinaZZZ?.modules?.infinite) {
+            window.AkinaZZZ.modules.infinite.reload({
+                sort: sortType,
+                page: 0
+            });
+        }
+    });
+    
+    // 监听密度变化事件
+    document.addEventListener('density-change', (e) => {
+        const density = e.detail;
+        console.log('Density changed to:', density);
+        
+        // 重新计算瀑布流布局
+        if (window.AkinaZZZ?.modules?.masonry) {
+            window.AkinaZZZ.modules.masonry.relayout();
+        }
+    });
+});
+
+// 页面可见性变化时重新计算布局
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && window.AkinaZZZ?.modules?.masonry) {
+        setTimeout(() => {
+            window.AkinaZZZ.modules.masonry.relayout();
+        }, 100);
+    }
+});
+</script>
+
+</html>

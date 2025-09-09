@@ -1,0 +1,217 @@
+<!-- 
+    页面头部组件
+    包含：返回/菜单按钮、用户信息、导航标签、网络状态
+-->
+<header th:fragment="header" 
+        class="sticky top-0 z-40 glass border-b border-dark-200/50 safe-area-inset-top">
+    
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 lg:h-20">
+            
+            <!-- 左侧：返回/菜单按钮 -->
+            <div class="flex items-center space-x-4">
+                <button id="menu-toggle" 
+                        class="flex items-center justify-center w-10 h-10 rounded-full bg-danger hover:bg-danger/90 text-white transition-all duration-200 group"
+                        aria-label="菜单"
+                        title="菜单">
+                    <svg class="w-5 h-5 transition-transform duration-200 group-hover:scale-110" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+
+                <!-- 站点Logo/标题 -->
+                <div class="hidden sm:block">
+                    <a th:href="@{/}" class="flex items-center space-x-3 group">
+                        <img th:if="${site.logo}" 
+                             th:src="${site.logo}" 
+                             th:alt="${site.title}"
+                             class="h-8 w-auto transition-transform duration-200 group-hover:scale-105">
+                        <span th:unless="${site.logo}" 
+                              th:text="${site.title}"
+                              class="text-lg font-bold text-dark-800 group-hover:text-accent transition-colors duration-200">
+                              Akina ZZZ
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 中央：导航标签 -->
+            <nav class="hidden md:flex items-center justify-center flex-1 mx-8"
+                 role="navigation"
+                 aria-label="主要导航">
+                <div class="nav-tabs max-w-2xl w-full" 
+                     x-data="{ activeTab: '推荐' }"
+                     x-init="activeTab = $el.querySelector('.nav-tab.active')?.textContent || '推荐'">
+                    
+                    <!-- 动态标签列表 -->
+                    <div th:each="tab, iterStat : ${@themeService.getNavigationTabs()}"
+                         class="nav-tab"
+                         th:class="|nav-tab ${tab.active ? 'active' : ''}|"
+                         x-bind:class="{ 'active': activeTab === '[[${tab.name}]]' }"
+                         x-on:click="activeTab = '[[${tab.name}]]'; $dispatch('tab-change', { tab: '[[${tab.name}]]', path: '[[${tab.path}]]' })"
+                         role="tab"
+                         th:aria-selected="${tab.active}"
+                         th:id="|tab-${iterStat.index}|"
+                         tabindex="0">
+                        <span th:text="${tab.name}">推荐</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 右侧：用户信息和网络状态 -->
+            <div class="flex items-center space-x-4">
+                
+                <!-- 搜索按钮 -->
+                <button id="search-toggle" 
+                        class="flex items-center justify-center w-10 h-10 rounded-full bg-dark-100 hover:bg-dark-200 text-dark-600 transition-all duration-200 group"
+                        aria-label="搜索"
+                        title="搜索">
+                    <svg class="w-5 h-5 transition-transform duration-200 group-hover:scale-110" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </button>
+
+                <!-- 用户信息 -->
+                <div th:if="${@themeService.getSetting('showUserInfo')}" 
+                     class="user-info hidden lg:flex">
+                    <div class="user-avatar">
+                        <img th:src="${site.user?.avatar ?: '/themes/akina-zzz/assets/img/default-avatar.svg'}" 
+                             th:alt="${site.user?.displayName ?: '用户'}"
+                             class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="user-name" th:text="${site.user?.displayName ?: '访客'}">访客</span>
+                        <div class="flex items-center space-x-1">
+                            <div class="w-12 h-1.5 bg-dark-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-accent transition-all duration-300" 
+                                     style="width: 65%"></div>
+                            </div>
+                            <span class="text-xs text-dark-500">Lv.5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 网络状态指示器 -->
+                <div class="hidden xl:flex items-center space-x-1 text-xs text-dark-500"
+                     id="network-status"
+                     title="网络延迟">
+                    <div class="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
+                    <span>42ms</span>
+                </div>
+
+                <!-- 设置菜单 -->
+                <div class="relative" x-data="{ open: false }">
+                    <button x-on:click="open = !open"
+                            class="flex items-center justify-center w-10 h-10 rounded-full bg-dark-100 hover:bg-dark-200 text-dark-600 transition-all duration-200"
+                            aria-label="设置"
+                            title="设置">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                        </svg>
+                    </button>
+
+                    <!-- 下拉菜单 -->
+                    <div x-show="open" 
+                         x-transition
+                         x-on:click.away="open = false"
+                         class="absolute right-0 top-full mt-2 w-48 bg-dark-50 rounded-2xl shadow-modal border border-dark-200 py-2 z-50">
+                        <a href="#" class="flex items-center px-4 py-2 text-sm text-dark-600 hover:text-dark-800 hover:bg-dark-100">
+                            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            主题设置
+                        </a>
+                        <a href="#" class="flex items-center px-4 py-2 text-sm text-dark-600 hover:text-dark-800 hover:bg-dark-100">
+                            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                            显示模式
+                        </a>
+                        <hr class="my-2 border-dark-200">
+                        <a th:href="@{/admin}" class="flex items-center px-4 py-2 text-sm text-dark-600 hover:text-dark-800 hover:bg-dark-100">
+                            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            后台管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 移动端导航菜单 -->
+    <div id="mobile-nav" 
+         class="fixed inset-0 z-50 hidden"
+         x-data="{ show: false }"
+         x-show="show"
+         x-transition>
+        
+        <!-- 遮罩层 -->
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-md" 
+             x-on:click="show = false"></div>
+        
+        <!-- 菜单面板 -->
+        <div class="fixed top-0 left-0 w-80 max-w-[90vw] h-full bg-dark-50 shadow-modal border-r border-dark-200 transform transition-transform duration-300"
+             x-bind:class="{ 'translate-x-0': show, '-translate-x-full': !show }">
+            
+            <!-- 菜单头部 -->
+            <div class="flex items-center justify-between p-4 border-b border-dark-200">
+                <span class="text-lg font-medium text-dark-800">菜单</span>
+                <button x-on:click="show = false"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-danger text-white">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- 导航链接 -->
+            <nav class="p-4 space-y-2">
+                <div th:each="tab : ${@themeService.getNavigationTabs()}">
+                    <a th:href="@{${tab.path}}" 
+                       th:text="${tab.name}"
+                       class="flex items-center px-4 py-3 rounded-xl text-dark-600 hover:text-dark-800 hover:bg-dark-100 transition-colors duration-200">
+                        推荐
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<!-- 初始化Alpine.js数据和事件监听器 -->
+<script>
+document.addEventListener('alpine:init', () => {
+    // 移动端菜单控制
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    
+    if (menuToggle && mobileNav) {
+        menuToggle.addEventListener('click', () => {
+            mobileNav.querySelector('[x-data]').__x.$data.show = true;
+        });
+    }
+    
+    // 标签切换事件
+    document.addEventListener('tab-change', (e) => {
+        const { tab, path } = e.detail;
+        console.log('Tab changed:', tab, path);
+        
+        // 如果需要，可以在这里处理路由变化
+        if (path && path !== window.location.pathname) {
+            // 可以实现SPA路由或直接跳转
+            window.location.href = path;
+        }
+    });
+});
+</script>

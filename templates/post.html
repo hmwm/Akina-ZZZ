@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN" 
+      th:lang="${#locale.language}" 
+      th:replace="~{layout/base :: html(
+        siteTitle=${post.spec.title + ' - ' + site.title},
+        metaDescription=${post.status.excerpt ?: (post.spec.title + ' - ' + site.title)},
+        metaKeywords=${#strings.listJoin(post.spec.tags, ',') + ',' + site.title},
+        metaImage=${post.spec.cover ?: '/themes/akina-zzz/assets/img/og-image.png'},
+        bodyClass='post-page',
+        contentFragment=~{:: content}
+      )}">
+
+<!-- 文章详情页内容 -->
+<th:block th:fragment="content">
+    
+    <!-- 返回按钮 -->
+    <div class="mb-6">
+        <button onclick="history.back()" 
+                class="flex items-center space-x-2 text-dark-500 hover:text-dark-700 transition-colors duration-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <span>返回</span>
+        </button>
+    </div>
+    
+    <!-- 文章内容容器 -->
+    <article class="max-w-4xl mx-auto">
+        
+        <!-- 文章头部 -->
+        <header class="mb-8 space-y-6">
+            
+            <!-- 文章分类和标签 -->
+            <div class="flex items-center space-x-4">
+                <div th:if="${post.categories}" class="flex space-x-2">
+                    <a th:each="category : ${post.categories}" 
+                       th:href="@{'/categories/' + ${category.metadata.name}}"
+                       th:text="'[' + ${category.spec.displayName} + ']'"
+                       class="tag-primary hover:bg-accent/30 transition-colors duration-200">
+                        [分类]
+                    </a>
+                </div>
+                
+                <div th:if="${post.tags}" class="flex flex-wrap gap-2">
+                    <a th:each="tag : ${post.tags}" 
+                       th:href="@{'/tags/' + ${tag.metadata.name}}"
+                       th:text="'#' + ${tag.spec.displayName}"
+                       class="tag hover:bg-dark-300 transition-colors duration-200">
+                        #标签
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 文章标题 -->
+            <h1 class="text-4xl font-bold text-dark-800 leading-tight" 
+                th:text="${post.spec.title}">
+                文章标题
+            </h1>
+            
+            <!-- 文章元信息 -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-6 text-dark-500">
+                    <!-- 作者信息 -->
+                    <div class="flex items-center space-x-3">
+                        <img th:src="${post.owner?.avatar ?: '/themes/akina-zzz/assets/img/default-avatar.svg'}" 
+                             th:alt="${post.owner?.displayName ?: '匿名'}"
+                             class="w-10 h-10 rounded-full">
+                        <div>
+                            <p class="font-medium text-dark-700" 
+                               th:text="${post.owner?.displayName ?: '匿名'}">
+                                作者名称
+                            </p>
+                            <time class="text-sm" 
+                                  th:datetime="${post.spec.publishTime}"
+                                  th:text="${#temporals.format(post.spec.publishTime, 'yyyy年M月d日')}">
+                                2024年1月1日
+                            </time>
+                        </div>
+                    </div>
+                    
+                    <!-- 阅读时间 -->
+                    <div class="flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span th:text="${@themeUtils.calculateReadingTime(post.spec.content)}">5 分钟阅读</span>
+                    </div>
+                </div>
+                
+                <!-- 文章统计 -->
+                <div th:replace="~{_fragments/stat-badge :: statsRowSimple(post=${post}, theme='normal')}">
+                </div>
+            </div>
+        </header>
+        
+        <!-- 文章封面图 -->
+        <div th:if="${post.spec.cover}" 
+             class="mb-8">
+            <img th:src="${post.spec.cover}" 
+                 th:alt="${post.spec.title}"
+                 class="w-full h-auto max-h-96 object-cover rounded-2xl shadow-card">
+        </div>
+        
+        <!-- 文章正文 -->
+        <div class="prose prose-dark prose-lg max-w-none mb-12" 
+             th:utext="${post.spec.content}">
+            <p>文章内容加载中...</p>
+        </div>
+        
+        <!-- 文章底部操作栏 -->
+        <div class="border-t border-dark-200 pt-8 mb-12">
+            <div class="flex items-center justify-between">
+                <!-- 统计和操作 -->
+                <div th:replace="~{_fragments/stat-badge :: statsRow(post=${post}, theme='normal')}">
+                </div>
+                
+                <!-- 更新时间 -->
+                <div class="text-sm text-dark-500">
+                    <span>最后更新：</span>
+                    <time th:datetime="${post.status.lastModifyTime ?: post.spec.publishTime}"
+                          th:text="${#temporals.format(post.status.lastModifyTime ?: post.spec.publishTime, 'yyyy-MM-dd HH:mm')}">
+                        2024-01-01 12:00
+                    </time>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 相关文章推荐 -->
+        <div th:if="${relatedPosts}" class="mb-12">
+            <h3 class="text-xl font-semibold text-dark-800 mb-6">相关文章</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <a th:each="relatedPost : ${relatedPosts}" 
+                   th:href="@{'/posts/' + ${relatedPost.status.slug}}"
+                   class="group block p-4 bg-dark-100 rounded-xl hover:bg-dark-200 transition-all duration-200">
+                    <div class="flex space-x-4">
+                        <img th:if="${relatedPost.spec.cover}"
+                             th:src="${relatedPost.spec.cover}" 
+                             th:alt="${relatedPost.spec.title}"
+                             class="w-16 h-16 rounded-lg object-cover">
+                        <div th:unless="${relatedPost.spec.cover}"
+                             class="w-16 h-16 bg-dark-200 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-dark-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-medium text-dark-800 line-clamp-2 group-hover:text-accent transition-colors duration-200"
+                                th:text="${relatedPost.spec.title}">
+                                相关文章标题
+                            </h4>
+                            <p class="text-sm text-dark-500 line-clamp-1 mt-1"
+                               th:text="${relatedPost.status.excerpt}">
+                                文章摘要
+                            </p>
+                            <div class="flex items-center space-x-3 mt-2 text-xs text-dark-400">
+                                <time th:datetime="${relatedPost.spec.publishTime}"
+                                      th:text="${#temporals.format(relatedPost.spec.publishTime, 'M月d日')}">
+                                    1月1日
+                                </time>
+                                <span th:replace="~{_fragments/stat-badge :: viewBadge(count=${relatedPost.status.visit ?: 0}, theme='normal')}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 评论区域 -->
+        <div th:if="${@themeService.getSetting('enableComments')}" 
+             class="border-t border-dark-200 pt-8">
+            <h3 class="text-xl font-semibold text-dark-800 mb-6">
+                评论 (<span th:text="${post.status.comment ?: 0}">0</span>)
+            </h3>
+            
+            <!-- 评论组件占位 -->
+            <div id="comment-container" 
+                 class="space-y-6"
+                 th:data-post-id="${post.metadata.name}"
+                 th:data-allow-comment="${post.spec.allowComment}">
+                
+                <!-- 评论表单 -->
+                <div class="bg-dark-100 rounded-xl p-6">
+                    <textarea placeholder="写下你的评论..."
+                              class="w-full h-24 bg-dark-50 border border-dark-200 rounded-xl px-4 py-3 text-dark-800 placeholder-dark-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent resize-none"></textarea>
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex items-center space-x-4 text-sm text-dark-500">
+                            <span>支持 Markdown 语法</span>
+                        </div>
+                        <button class="pill-btn-primary">
+                            发布评论
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 评论列表加载占位 -->
+                <div th:replace="~{_fragments/skeleton :: commentsSkeleton(count=3)}">
+                </div>
+            </div>
+        </div>
+    </article>
+    
+    <!-- 浮动操作栏（移动端） -->
+    <div class="fixed bottom-4 left-4 right-4 md:hidden">
+        <div class="flex items-center justify-between bg-dark-50 rounded-2xl p-3 shadow-card border border-dark-200">
+            <div class="flex items-center space-x-4">
+                <div th:replace="~{_fragments/stat-badge :: viewBadge(count=${post.status.visit ?: 0}, theme='normal')}"></div>
+                <div th:replace="~{_fragments/stat-badge :: likeBadge(count=${post.status.like ?: 0}, postId=${post.metadata.name}, theme='normal')}"></div>
+            </div>
+            <button class="pill-btn-secondary text-sm">
+                分享
+            </button>
+        </div>
+    </div>
+    
+    <!-- 阅读进度条 -->
+    <div class="fixed top-0 left-0 w-full h-1 bg-dark-200 z-50">
+        <div id="reading-progress" 
+             class="h-full bg-accent transition-all duration-100"
+             style="width: 0%">
+        </div>
+    </div>
+</th:block>
+
+<!-- 页面特定脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 阅读进度条
+    const progressBar = document.getElementById('reading-progress');
+    const article = document.querySelector('article');
+    
+    if (progressBar && article) {
+        const updateProgress = () => {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            progressBar.style.width = Math.min(progress, 100) + '%';
+        };
+        
+        window.addEventListener('scroll', window.AkinaZZZ?.utils?.throttle(updateProgress, 16) || updateProgress);
+    }
+    
+    // 代码高亮（如果需要）
+    if (typeof hljs !== 'undefined') {
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // 图片懒加载
+    if (window.AkinaZZZ?.modules?.lazy) {
+        window.AkinaZZZ.modules.lazy.observe();
+    }
+    
+    // 自动生成目录（如果内容足够长）
+    const content = document.querySelector('.prose');
+    if (content) {
+        const headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        if (headings.length >= 3) {
+            generateTableOfContents(headings);
+        }
+    }
+});
+
+function generateTableOfContents(headings) {
+    // 生成文章目录的简单实现
+    const toc = document.createElement('div');
+    toc.className = 'fixed top-1/2 right-4 transform -translate-y-1/2 bg-dark-50 rounded-xl p-4 shadow-card border border-dark-200 hidden xl:block max-w-xs';
+    toc.innerHTML = '<h4 class="text-sm font-semibold text-dark-700 mb-3">目录</h4>';
+    
+    const tocList = document.createElement('ul');
+    tocList.className = 'space-y-1 text-sm';
+    
+    headings.forEach((heading, index) => {
+        const id = `heading-${index}`;
+        heading.id = id;
+        
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = heading.textContent;
+        a.className = `block text-dark-500 hover:text-accent transition-colors duration-200 py-1 pl-${(parseInt(heading.tagName.charAt(1)) - 1) * 2}`;
+        
+        li.appendChild(a);
+        tocList.appendChild(li);
+    });
+    
+    toc.appendChild(tocList);
+    document.body.appendChild(toc);
+    
+    // 平滑滚动
+    toc.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.querySelector(link.getAttribute('href'));
+            if (target) {
+                window.AkinaZZZ?.utils?.scrollToElement(target, 100);
+            }
+        });
+    });
+}
+</script>
+
+</html>

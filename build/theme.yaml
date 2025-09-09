@@ -1,0 +1,133 @@
+apiVersion: theme.halo.run/v1alpha1
+kind: Theme
+metadata:
+  name: akina-zzz
+spec:
+  displayName: Akina ZZZ
+  author:
+    name: AI Agent
+    website: https://github.com/halo-dev
+  description: 深色系瀑布流主题，专为内容展示和交互优化设计
+  homepage: https://github.com/halo-dev/akina-zzz
+  repo: https://github.com/halo-dev/akina-zzz.git
+  settingsSchema: 
+    openapi: 3.0.0
+    info:
+      title: Akina ZZZ Theme Settings
+      version: 1.0.0
+    components:
+      schemas:
+        BasicSettings:
+          type: object
+          properties:
+            accent_color:
+              type: string
+              default: "#d8ff39"
+              title: 主题强调色
+              description: 选中Tab和按钮的高亮色
+            enable_modal:
+              type: boolean
+              default: true
+              title: 启用弹层详情
+              description: 点击卡片时显示详情弹层而不是跳转页面
+            enable_infinite_scroll:
+              type: boolean
+              default: true
+              title: 启用无限滚动
+              description: 滚动到底部自动加载更多内容
+            masonry_columns:
+              type: object
+              title: 瀑布流列数设置
+              properties:
+                desktop:
+                  type: integer
+                  default: 3
+                  minimum: 2
+                  maximum: 5
+                  title: 桌面端列数
+                tablet:
+                  type: integer
+                  default: 2
+                  minimum: 1
+                  maximum: 3
+                  title: 平板端列数
+                mobile:
+                  type: integer
+                  default: 1
+                  minimum: 1
+                  maximum: 2
+                  title: 移动端列数
+            card_density:
+              type: string
+              enum: ["loose", "normal", "tight"]
+              default: "normal"
+              title: 卡片密度
+              description: 卡片间距的疏密程度
+        HeaderSettings:
+          type: object
+          properties:
+            site_logo:
+              type: string
+              title: 站点Logo
+              description: 头部左侧显示的Logo图片URL
+            show_user_info:
+              type: boolean
+              default: true
+              title: 显示用户信息
+              description: 在头部右侧显示用户信息区域
+            tabs:
+              type: array
+              title: 导航标签配置
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    title: 标签名称
+                  path:
+                    type: string
+                    title: 链接路径
+                  active:
+                    type: boolean
+                    default: false
+                    title: 默认激活
+              default:
+                - name: "推荐"
+                  path: "/"
+                  active: true
+                - name: "日程"
+                  path: "/categories"
+                  active: false
+                - name: "历程"
+                  path: "/archives"
+                  active: false
+                - name: "绒网等级!"
+                  path: "/tags"
+                  active: false
+        AdvancedSettings:
+          type: object
+          properties:
+            enable_like:
+              type: boolean
+              default: true
+              title: 启用点赞功能
+              description: 在卡片和详情页显示点赞按钮
+            show_view_count:
+              type: boolean
+              default: true
+              title: 显示浏览量
+              description: 在卡片上显示浏览量统计
+            lazy_load_images:
+              type: boolean
+              default: true
+              title: 图片懒加载
+              description: 延迟加载图片以提升性能
+            background_texture:
+              type: boolean
+              default: true
+              title: 启用背景纹理
+              description: 为深色背景添加斜向纹理效果
+  version: "1.0.0"
+  require: "2.10.0"
+  license:
+    - name: "MIT"

@@ -1,0 +1,244 @@
+/* 
+ * Akina ZZZ 设计令牌
+ * Design Tokens for consistent theming
+ */
+
+:root {
+  /* ============================================
+     颜色系统 Color System
+     ============================================ */
+  
+  /* 深色基础色彩 */
+  --color-bg-0: #0b0b0e;
+  --color-bg-1: #141418;
+  --color-card: #1b1b21;
+  --color-hover: #2a2a32;
+  --color-border: #3a3a44;
+  --color-divider: #52525b;
+  
+  /* 文字颜色 */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d4d4d8;
+  --color-text-muted: #a1a1aa;
+  --color-text-disabled: #71717a;
+  
+  /* 主题强调色 */
+  --color-accent: #d8ff39;
+  --color-accent-hover: #beff2b;
+  --color-accent-light: #f0ffcc;
+  --color-accent-dark: #a6d800;
+  
+  /* 警示色 */
+  --color-danger: #ff3b3b;
+  --color-danger-hover: #f31919;
+  --color-danger-light: #ffe1e1;
+  --color-danger-dark: #cc0e0e;
+  
+  /* 品牌色 */
+  --color-brand: #2962ff;
+  --color-brand-hover: #1e4ed8;
+  --color-brand-light: #e1eaff;
+  --color-brand-dark: #1d3fb3;
+  
+  /* 成功色 */
+  --color-success: #10b981;
+  --color-success-hover: #059669;
+  --color-success-light: #d1fae5;
+  
+  /* 警告色 */
+  --color-warning: #f59e0b;
+  --color-warning-hover: #d97706;
+  --color-warning-light: #fef3c7;
+
+  /* ============================================
+     间距系统 Spacing System
+     ============================================ */
+  
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+  --space-32: 8rem;     /* 128px */
+
+  /* ============================================
+     圆角系统 Border Radius System
+     ============================================ */
+  
+  --radius-none: 0;
+  --radius-sm: 0.25rem;    /* 4px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1.125rem;   /* 18px */
+  --radius-2xl: 1.5rem;    /* 24px */
+  --radius-3xl: 2rem;      /* 32px */
+  --radius-full: 9999px;
+
+  /* ============================================
+     阴影系统 Shadow System
+     ============================================ */
+  
+  --shadow-card: 0 4px 16px -2px rgba(0, 0, 0, 0.3), 0 2px 8px -1px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 4px 16px -2px rgba(0, 0, 0, 0.5);
+  --shadow-modal: 0 20px 64px -8px rgba(0, 0, 0, 0.6), 0 8px 32px -4px rgba(0, 0, 0, 0.4);
+  --shadow-pill: 0 2px 8px -1px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  --shadow-inset: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  
+  /* ============================================
+     字体系统 Typography System
+     ============================================ */
+  
+  /* 字体家族 */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-mono: SFMono-Regular, Monaco, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+  
+  /* 字体大小 */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  
+  /* 行高 */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+  
+  /* 字重 */
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ============================================
+     层级系统 Z-Index System
+     ============================================ */
+  
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-fixed: 30;
+  --z-modal: 40;
+  --z-popover: 50;
+  --z-tooltip: 60;
+  --z-notification: 70;
+
+  /* ============================================
+     动画系统 Animation System
+     ============================================ */
+  
+  /* 缓动曲线 */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* 持续时间 */
+  --duration-instant: 0s;
+  --duration-fast: 0.15s;
+  --duration-normal: 0.3s;
+  --duration-slow: 0.5s;
+  
+  /* ============================================
+     断点系统 Breakpoint System
+     ============================================ */
+  
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* ============================================
+     布局系统 Layout System
+     ============================================ */
+  
+  /* 容器宽度 */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  
+  /* 瀑布流列数 */
+  --masonry-columns-mobile: 1;
+  --masonry-columns-tablet: 2;
+  --masonry-columns-desktop: 3;
+  --masonry-columns-wide: 4;
+  
+  /* 卡片尺寸 */
+  --card-height-sm: 200px;
+  --card-height-md: 300px;
+  --card-height-lg: 400px;
+
+  /* ============================================
+     特效系统 Effect System
+     ============================================ */
+  
+  /* 背景虚化 */
+  --blur-sm: 4px;
+  --blur-md: 12px;
+  --blur-lg: 24px;
+  --blur-xl: 40px;
+  
+  /* 透明度 */
+  --opacity-0: 0;
+  --opacity-50: 0.5;
+  --opacity-75: 0.75;
+  --opacity-90: 0.9;
+  --opacity-95: 0.95;
+  --opacity-100: 1;
+}
+
+/* ============================================
+   深色模式适配 Dark Mode Adaptation
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* ============================================
+   高对比度模式适配 High Contrast Mode
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  :root {
+    --color-text-muted: #ffffff;
+    --color-border: #ffffff;
+    --shadow-card: 0 0 0 2px #ffffff;
+  }
+}
+
+/* ============================================
+   动画偏好设置适配 Reduced Motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 0s;
+    --duration-fast: 0s;
+    --duration-normal: 0s;
+    --duration-slow: 0s;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN" 
+      th:lang="${#locale.language}" 
+      th:replace="~{layout/base :: html(
+        siteTitle='分类 - ' + ${site.title},
+        metaDescription='浏览 ' + ${site.title} + ' 的所有文章分类',
+        metaKeywords='分类,文章分类,' + ${site.title},
+        metaImage=${site.logo ?: '/themes/akina-zzz/assets/img/og-image.png'},
+        bodyClass='categories-page',
+        contentFragment=~{:: content}
+      )}">
+
+<!-- 分类页面内容 -->
+<th:block th:fragment="content">
+    
+    <!-- 页面标题 -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-dark-800 mb-4">文章分类</h1>
+        <p class="text-dark-500">
+            共 <span th:text="${categories.size()}" class="font-medium text-accent">0</span> 个分类，
+            <span th:text="${posts.totalElements}" class="font-medium text-accent">0</span> 篇文章
+        </p>
+    </div>
+    
+    <!-- 分类列表 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <a th:each="category : ${categories}" 
+           th:href="@{'/categories/' + ${category.metadata.name}}"
+           class="group block p-6 bg-dark-100 rounded-2xl hover:bg-dark-200 transition-all duration-200 hover:transform hover:scale-[1.02]">
+            
+            <!-- 分类图标和名称 -->
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center group-hover:bg-accent/30 transition-colors duration-200">
+                    <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-dark-800 group-hover:text-accent transition-colors duration-200"
+                        th:text="${category.spec.displayName}">
+                        分类名称
+                    </h3>
+                    <p class="text-sm text-dark-500" 
+                       th:text="${category.status.postCount ?: 0} + ' 篇文章'">
+                        0 篇文章
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 分类描述 -->
+            <p class="text-dark-600 text-sm line-clamp-2 leading-relaxed mb-4"
+               th:text="${category.spec.description ?: '暂无描述'}"
+               th:if="${category.spec.description}">
+                分类描述
+            </p>
+            
+            <!-- 最近文章 -->
+            <div th:if="${category.recentPosts}" class="space-y-2">
+                <p class="text-xs font-medium text-dark-500 uppercase tracking-wider">最近文章</p>
+                <div class="space-y-1">
+                    <div th:each="post, iterStat : ${category.recentPosts}" 
+                         th:if="${iterStat.index < 3}"
+                         class="text-sm text-dark-600 truncate">
+                        <span th:text="${post.spec.title}">文章标题</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    
+    <!-- 如果有选中的分类，显示该分类的文章 -->
+    <div th:if="${selectedCategory}">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-dark-800">
+                <span th:text="${selectedCategory.spec.displayName}">分类名称</span> 
+                <span class="text-lg font-normal text-dark-500">
+                    (<span th:text="${posts.totalElements}">0</span>)
+                </span>
+            </h2>
+            
+            <a th:href="@{/categories}" class="pill-btn-secondary">
+                查看所有分类
+            </a>
+        </div>
+        
+        <!-- 分类描述 -->
+        <div th:if="${selectedCategory.spec.description}" 
+             class="mb-8 p-4 bg-dark-100 rounded-xl">
+            <p class="text-dark-600" th:text="${selectedCategory.spec.description}">分类描述</p>
+        </div>
+        
+        <!-- 文章瀑布流 -->
+        <div id="masonry-container" class="masonry-container">
+            <div th:each="post : ${posts.content}" 
+                 th:replace="~{_fragments/card :: postCard(post=${post}, index=${postStat.index})}">
+            </div>
+        </div>
+        
+        <!-- 分页 -->
+        <div th:if="${posts.hasNext()}" class="mt-12">
+            <div class="flex justify-center">
+                <a th:href="@{'/categories/' + ${selectedCategory.metadata.name} + '?page=' + ${posts.number + 2}}" 
+                   class="pill-btn-primary">
+                    加载更多文章
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 无分类状态 -->
+    <div th:if="${#lists.isEmpty(categories)}" 
+         class="text-center py-16">
+        <div class="w-24 h-24 mx-auto mb-6 text-dark-300">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-full h-full">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" 
+                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+            </svg>
+        </div>
+        <h2 class="text-xl font-medium text-dark-700 mb-2">暂无分类</h2>
+        <p class="text-dark-500">还没有创建任何文章分类</p>
+    </div>
+</th:block>
+
+<!-- 页面脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 初始化瀑布流（如果有文章列表）
+    const container = document.getElementById('masonry-container');
+    if (container && window.AkinaZZZ?.modules?.masonry) {
+        window.AkinaZZZ.modules.masonry.init(container);
+    }
+});
+</script>
+
+</html>

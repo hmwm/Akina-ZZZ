@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN" th:lang="${#locale.language}" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#0b0b0e">
+    <meta name="color-scheme" content="dark">
+    
+    <!-- 网站基础信息 -->
+    <title th:text="${siteTitle}">Akina ZZZ</title>
+    <meta name="description" th:content="${metaDescription}">
+    <meta name="keywords" th:content="${metaKeywords}">
+    <meta name="author" th:content="${site.user?.displayName}">
+    
+    <!-- 开放图谱标签 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" th:content="${siteTitle}">
+    <meta property="og:description" th:content="${metaDescription}">
+    <meta property="og:image" th:content="${metaImage}">
+    <meta property="og:url" th:content="${#request.requestURL}">
+    <meta property="og:site_name" th:content="${site.title}">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" th:content="${siteTitle}">
+    <meta name="twitter:description" th:content="${metaDescription}">
+    <meta name="twitter:image" th:content="${metaImage}">
+    
+    <!-- 主题设置传递 -->
+    <meta name="theme-settings" th:content="${@themeService.getThemeSettings()}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/themes/akina-zzz/assets/img/favicon.svg">
+    <link rel="icon" type="image/png" href="/themes/akina-zzz/assets/img/favicon.png">
+    <link rel="apple-touch-icon" href="/themes/akina-zzz/assets/img/apple-touch-icon.png">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="/themes/akina-zzz/assets/css/style.css" as="style">
+    <link rel="preload" href="/themes/akina-zzz/assets/js/main.js" as="script">
+    
+    <!-- 样式表 -->
+    <link rel="stylesheet" href="/themes/akina-zzz/assets/css/tokens.css">
+    <link rel="stylesheet" href="/themes/akina-zzz/assets/css/style.css">
+    
+    <!-- 自定义样式（内联关键CSS） -->
+    <style th:if="${@themeService.getCriticalCSS()}">
+        /*<![CDATA[*/
+        [[${@themeService.getCriticalCSS()}]]
+        /*]]>*/
+    </style>
+</head>
+
+<body class="bg-dark-0 text-dark-800 font-sans antialiased" 
+      th:class="|bg-dark-0 text-dark-800 font-sans antialiased ${bodyClass}|"
+      th:data-theme="akina-zzz"
+      th:data-version="1.0.0">
+
+    <!-- 跳转到内容链接（无障碍） -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-accent focus:text-dark-0 focus:px-4 focus:py-2 focus:rounded-lg">
+        跳转到主要内容
+    </a>
+
+    <!-- 全局加载指示器 -->
+    <div id="global-loading" 
+         class="fixed top-0 left-0 w-full h-1 bg-dark-100 z-50 hidden">
+        <div class="h-full bg-accent transition-all duration-300 ease-out" 
+             style="width: 0%"></div>
+    </div>
+
+    <!-- 页面包装器 -->
+    <div id="app" class="min-h-screen flex flex-col">
+        
+        <!-- 页面头部 -->
+        <header th:replace="~{layout/header :: header}"></header>
+        
+        <!-- 主要内容区域 -->
+        <main id="main-content" 
+              class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-6"
+              role="main">
+            
+            <!-- 内容插槽 -->
+            <div th:replace="${contentFragment}">
+                <!-- 默认内容 -->
+                <div class="text-center py-12">
+                    <div class="text-dark-500 mb-4">
+                        <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-medium text-dark-700 mb-2">内容加载中...</h1>
+                    <p class="text-dark-500">请稍候片刻</p>
+                </div>
+            </div>
+        </main>
+        
+        <!-- 页面底部 -->
+        <footer th:replace="~{layout/footer :: footer}"></footer>
+    </div>
+
+    <!-- 全局模态框容器 -->
+    <div id="modal-container"></div>
+    
+    <!-- 全局通知容器 -->
+    <div id="notification-container" 
+         class="fixed top-4 right-4 z-60 space-y-2 pointer-events-none"></div>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" 
+            class="fixed bottom-6 right-6 w-12 h-12 bg-dark-100 hover:bg-dark-200 text-dark-600 rounded-full shadow-card opacity-0 pointer-events-none transition-all duration-300 z-40"
+            aria-label="返回顶部"
+            title="返回顶部">
+        <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+    </button>
+
+    <!-- 脚本文件 -->
+    <script src="/themes/akina-zzz/assets/js/main.js" defer></script>
+    
+    <!-- 统计代码 -->
+    <div th:utext="${@themeService.getAnalyticsCode()}" th:if="${@themeService.getAnalyticsCode()}"></div>
+
+    <!-- 自定义脚本 -->
+    <script th:if="${@themeService.getCustomScript()}" th:utext="${@themeService.getCustomScript()}"></script>
+
+    <!-- 性能监控 -->
+    <script th:if="${@themeService.isDevelopmentMode()}">
+        // 性能监控（仅开发环境）
+        window.addEventListener('load', () => {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            console.log(`%c[Akina ZZZ] 页面加载完成`, 'color: #d8ff39; font-weight: bold;');
+            console.log(`DOM解析: ${Math.round(perfData.domContentLoadedEventEnd - perfData.fetchStart)}ms`);
+            console.log(`完全加载: ${Math.round(perfData.loadEventEnd - perfData.fetchStart)}ms`);
+        });
+    </script>
+</body>
+</html>

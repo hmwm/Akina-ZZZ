@@ -1,0 +1,70 @@
+# Akina ZZZ 主题设置配置文件
+# 该文件定义了主题可配置的选项和默认值
+
+# 基础设置
+basic:
+  # 主题色彩配置
+  accent_color: "#d8ff39"  # 荧光黄强调色
+  danger_color: "#ff3b3b"  # 红色警示色
+  brand_blue: "#2962ff"    # 品牌蓝色
+
+  # 布局设置
+  enable_modal: true       # 启用弹层详情
+  enable_infinite_scroll: true  # 启用无限滚动
+  
+  # 瀑布流列数配置
+  masonry_columns:
+    desktop: 3   # 桌面端（>=1440px）
+    tablet: 2    # 平板端（768px-1439px）
+    mobile: 1    # 移动端（<768px）
+  
+  card_density: "normal"   # 卡片密度: loose/normal/tight
+
+# 头部设置
+header:
+  site_logo: ""           # 站点Logo URL，留空则使用站点名称
+  show_user_info: true    # 显示用户信息区域
+  
+  # Tab导航配置
+  tabs:
+    - name: "推荐"
+      path: "/"
+      active: true
+    - name: "日程"  
+      path: "/categories"
+      active: false
+    - name: "历程"
+      path: "/archives"
+      active: false
+    - name: "绒网等级!"
+      path: "/tags"
+      active: false
+
+# 交互功能设置  
+interaction:
+  enable_like: true         # 启用点赞功能
+  show_view_count: true     # 显示浏览量
+  lazy_load_images: true    # 图片懒加载
+
+# 视觉效果设置
+visual:
+  background_texture: true  # 背景纹理
+  card_shadow_strength: "medium"  # 卡片阴影强度: light/medium/strong
+  border_radius: "large"    # 圆角大小: small/medium/large
+  
+# 性能优化设置
+performance:
+  inline_critical_css: true    # 内联关键CSS
+  split_js_chunks: true        # JS分包加载
+  optimize_images: true        # 图片优化
+  
+# 无障碍设置
+accessibility:
+  keyboard_navigation: true    # 键盘导航支持
+  high_contrast_mode: false   # 高对比度模式
+  reduce_motion: false        # 减少动画
+
+# 开发模式设置（生产环境应设为false）
+development:
+  debug_mode: false          # 调试模式
+  show_build_info: false     # 显示构建信息

@@ -1,0 +1,256 @@
+<!-- 
+    卡片组件片段
+    包含：文章卡片、品牌卡片、占位卡片等变体
+-->
+
+<!-- 文章卡片 -->
+<article th:fragment="postCard(post, index)" 
+         class="masonry-item card cursor-pointer group"
+         th:classappend="${index % 7 == 3 ? 'card-lg' : (index % 5 == 1 ? 'card-sm' : 'card-md')}"
+         th:data-post-id="${post.metadata.name}"
+         th:data-post-url="@{'/posts/' + ${post.status.slug}}"
+         x-on:click="$dispatch('card-click', { 
+           postId: '[[${post.metadata.name}]]', 
+           url: '[[${'/posts/' + post.status.slug}]]',
+           title: '[[${post.spec.title}]]'
+         })">
+    
+    <!-- 卡片封面图 -->
+    <div th:if="${post.spec.cover}" 
+         class="relative overflow-hidden aspect-video">
+        <img th:data-src="${post.spec.cover}"
+             th:alt="${post.spec.title}"
+             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 lazy"
+             loading="lazy">
+        
+        <!-- 封面图上的文字遮罩 -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        
+        <!-- 浏览量标签（图片模式） -->
+        <div class="absolute top-3 right-3">
+            <div th:replace="~{_fragments/stat-badge :: viewBadge(count=${post.status.visit ?: 0}, theme='overlay')}"></div>
+        </div>
+        
+        <!-- 标题和摘要（覆盖在图片上） -->
+        <div class="absolute bottom-0 left-0 right-0 p-4">
+            <h2 class="text-white text-lg font-semibold mb-2 line-clamp-2 text-shadow"
+                th:text="${post.spec.title}">
+                文章标题
+            </h2>
+            <p th:if="${post.status.excerpt}" 
+               class="text-white/90 text-sm line-clamp-2 text-shadow-light"
+               th:text="${post.status.excerpt}">
+                文章摘要...
+            </p>
+        </div>
+    </div>
+    
+    <!-- 无封面图的卡片内容 -->
+    <div th:unless="${post.spec.cover}" 
+         class="card-content">
+        
+        <!-- 文章分类标签 -->
+        <div th:if="${post.categories}" 
+             class="flex items-center space-x-2 mb-3">
+            <span th:each="category : ${post.categories}" 
+                  th:text="'[' + ${category.spec.displayName} + ']'"
+                  class="tag-primary">
+                [分类]
+            </span>
+        </div>
+        
+        <!-- 标题 -->
+        <h2 class="text-dark-800 text-lg font-semibold mb-3 line-clamp-2 group-hover:text-accent transition-colors duration-200"
+            th:text="${post.spec.title}">
+            文章标题
+        </h2>
+        
+        <!-- 摘要 -->
+        <p th:if="${post.status.excerpt}" 
+           class="text-dark-500 text-sm line-clamp-3 mb-4 leading-relaxed"
+           th:text="${post.status.excerpt}">
+            文章摘要内容，这里会显示文章的前几行内容作为预览...
+        </p>
+        
+        <!-- 顶部统计信息 -->
+        <div class="flex items-center justify-between mb-4">
+            <div th:replace="~{_fragments/stat-badge :: viewBadge(count=${post.status.visit ?: 0}, theme='normal')}"></div>
+            <div class="flex items-center space-x-2">
+                <div th:replace="~{_fragments/stat-badge :: likeBadge(count=${post.status.like ?: 0}, postId=${post.metadata.name})}"></div>
+                <!-- 更多按钮 -->
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg text-dark-400 hover:text-dark-600 hover:bg-dark-200 transition-all duration-200"
+                        aria-label="更多选项">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 卡片底部信息（作者、时间） -->
+    <div class="border-t border-dark-200 px-4 py-3">
+        <div class="flex items-center justify-between">
+            <!-- 作者信息 -->
+            <div class="user-info">
+                <div class="user-avatar">
+                    <img th:src="${post.owner?.avatar ?: '/themes/akina-zzz/assets/img/default-avatar.svg'}" 
+                         th:alt="${post.owner?.displayName ?: '匿名'}"
+                         class="w-full h-full object-cover">
+                </div>
+                <div class="flex flex-col">
+                    <span class="user-name" 
+                          th:text="${post.owner?.displayName ?: '匿名'}">
+                        作者名称
+                    </span>
+                    <time class="text-xs text-dark-400" 
+                          th:datetime="${post.spec.publishTime}"
+                          th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}">
+                        2024-01-01
+                    </time>
+                </div>
+            </div>
+            
+            <!-- 文章标签 -->
+            <div th:if="${post.tags}" 
+                 class="flex items-center space-x-1">
+                <span th:each="tag, tagStat : ${post.tags}" 
+                      th:if="${tagStat.index < 2}"
+                      th:text="'#' + ${tag.spec.displayName}"
+                      class="tag text-xs">
+                    #标签
+                </span>
+                <span th:if="${#lists.size(post.tags) > 2}" 
+                      class="tag text-xs">
+                    +[[${#lists.size(post.tags) - 2}]]
+                </span>
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- 品牌卡片 -->
+<div th:fragment="brandCard" 
+     class="masonry-item brand-card card-md">
+    <div class="card-content h-full flex flex-col items-center justify-center text-center py-8">
+        <div class="w-16 h-16 mb-4 text-white">
+            <!-- 这里可以放品牌Logo -->
+            <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">极晶美克</h3>
+        <p class="text-white/80 text-sm mb-4">品牌广告位</p>
+        <button class="pill-btn text-brand bg-white hover:bg-white/90">
+            了解更多
+        </button>
+    </div>
+</div>
+
+<!-- 占位卡片（小型信息卡） -->
+<div th:fragment="placeholderCard" 
+     class="masonry-item card-sm bg-dark-100/50 border border-dark-200 border-dashed">
+    <div class="card-content h-full flex flex-col items-center justify-center text-center">
+        <div class="w-8 h-8 mb-3 text-dark-400">
+            <svg class="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M12 4v16m8-8H4"/>
+            </svg>
+        </div>
+        <p class="text-dark-500 text-sm">占位内容</p>
+    </div>
+</div>
+
+<!-- 高瘦型大图卡片 -->
+<div th:fragment="tallImageCard(post)" 
+     class="masonry-item card cursor-pointer group"
+     style="height: 500px"
+     th:data-post-id="${post.metadata.name}"
+     th:data-post-url="@{'/posts/' + ${post.status.slug}}">
+    
+    <div class="relative h-full overflow-hidden">
+        <img th:data-src="${post.spec.cover}"
+             th:alt="${post.spec.title}"
+             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 lazy">
+        
+        <!-- 渐变遮罩 -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        
+        <!-- 统计信息 -->
+        <div class="absolute top-4 right-4">
+            <div th:replace="~{_fragments/stat-badge :: viewBadge(count=${post.status.visit ?: 0}, theme='overlay')}"></div>
+        </div>
+        
+        <!-- 内容信息 -->
+        <div class="absolute bottom-0 left-0 right-0 p-6">
+            <!-- 分类标签 -->
+            <div th:if="${post.categories}" 
+                 class="flex items-center space-x-2 mb-3">
+                <span th:each="category : ${post.categories}" 
+                      th:text="'[' + ${category.spec.displayName} + ']'"
+                      class="px-2 py-1 bg-white/20 text-white text-xs font-medium rounded-md backdrop-blur-sm">
+                    [分类]
+                </span>
+            </div>
+            
+            <h2 class="text-white text-xl font-bold mb-3 line-clamp-2 text-shadow"
+                th:text="${post.spec.title}">
+                文章标题
+            </h2>
+            
+            <p class="text-white/90 text-sm line-clamp-3 mb-4 text-shadow-light"
+               th:text="${post.status.excerpt}">
+                文章摘要...
+            </p>
+            
+            <!-- 作者和时间 -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <img th:src="${post.owner?.avatar ?: '/themes/akina-zzz/assets/img/default-avatar.svg'}" 
+                         th:alt="${post.owner?.displayName ?: '匿名'}"
+                         class="w-6 h-6 rounded-full">
+                    <span class="text-white/80 text-sm font-medium"
+                          th:text="${post.owner?.displayName ?: '匿名'}">
+                        作者
+                    </span>
+                </div>
+                <time class="text-white/60 text-sm"
+                      th:datetime="${post.spec.publishTime}"
+                      th:text="${#temporals.format(post.spec.publishTime, 'MM-dd')}">
+                    01-01
+                </time>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 卡片点击事件处理 -->
+<script>
+document.addEventListener('alpine:init', () => {
+    // 监听卡片点击事件
+    document.addEventListener('card-click', async (e) => {
+        const { postId, url, title } = e.detail;
+        
+        // 如果启用了弹层模式
+        if (window.AkinaZZZ?.utils?.getSetting('enableModal')) {
+            try {
+                // 阻止默认跳转
+                e.preventDefault();
+                
+                // 显示加载状态
+                if (window.AkinaZZZ?.modules?.modal) {
+                    await window.AkinaZZZ.modules.modal.showPost(postId, title);
+                }
+            } catch (error) {
+                console.error('Failed to show modal:', error);
+                // 降级到直接跳转
+                window.location.href = url;
+            }
+        } else {
+            // 直接跳转
+            window.location.href = url;
+        }
+    });
+});
+</script>

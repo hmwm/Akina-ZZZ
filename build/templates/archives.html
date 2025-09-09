@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN" 
+      th:lang="${#locale.language}" 
+      th:replace="~{layout/base :: html(
+        siteTitle='归档 - ' + ${site.title},
+        metaDescription='浏览 ' + ${site.title} + ' 的文章归档',
+        metaKeywords='归档,文章归档,' + ${site.title},
+        metaImage=${site.logo ?: '/themes/akina-zzz/assets/img/og-image.png'},
+        bodyClass='archives-page',
+        contentFragment=~{:: content}
+      )}">
+
+<!-- 归档页面内容 -->
+<th:block th:fragment="content">
+    
+    <!-- 页面标题 -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-dark-800 mb-4">文章归档</h1>
+        <p class="text-dark-500">
+            共 <span th:text="${archives.totalPosts}" class="font-medium text-accent">0</span> 篇文章，
+            分布在 <span th:text="${archives.totalYears}" class="font-medium text-accent">0</span> 年中
+        </p>
+    </div>
+    
+    <!-- 统计信息 -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div class="bg-dark-100 rounded-xl p-6 text-center">
+            <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-dark-800" th:text="${archives.totalPosts}">0</h3>
+            <p class="text-sm text-dark-500">篇文章</p>
+        </div>
+        
+        <div class="bg-dark-100 rounded-xl p-6 text-center">
+            <div class="w-12 h-12 bg-brand/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-dark-800" th:text="${archives.totalYears}">0</h3>
+            <p class="text-sm text-dark-500">年</p>
+        </div>
+        
+        <div class="bg-dark-100 rounded-xl p-6 text-center">
+            <div class="w-12 h-12 bg-danger/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-dark-800" th:text="${archives.totalViews}">0</h3>
+            <p class="text-sm text-dark-500">总浏览量</p>
+        </div>
+        
+        <div class="bg-dark-100 rounded-xl p-6 text-center">
+            <div class="w-12 h-12 bg-accent/30 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-dark-800" th:text="${@themeUtils.calculateAvgPostsPerMonth()}">0</h3>
+            <p class="text-sm text-dark-500">月平均文章数</p>
+        </div>
+    </div>
+    
+    <!-- 时间线归档 -->
+    <div class="space-y-8">
+        <div th:each="yearGroup : ${archives.yearGroups}" class="timeline-year">
+            
+            <!-- 年份标题 -->
+            <div class="sticky top-20 z-10 mb-6">
+                <div class="inline-flex items-center px-6 py-3 bg-dark-50 border border-dark-200 rounded-2xl shadow-card">
+                    <div class="w-3 h-3 bg-accent rounded-full mr-3"></div>
+                    <h2 class="text-2xl font-bold text-dark-800" th:text="${yearGroup.year}">2024</h2>
+                    <span class="ml-3 px-3 py-1 bg-accent/20 text-accent text-sm font-medium rounded-full" 
+                          th:text="${yearGroup.postCount} + ' 篇'">
+                        0 篇
+                    </span>
+                </div>
+            </div>
+            
+            <!-- 月份分组 -->
+            <div class="space-y-6">
+                <div th:each="monthGroup : ${yearGroup.monthGroups}" class="timeline-month">
+                    
+                    <!-- 月份标题 -->
+                    <div class="flex items-center mb-4">
+                        <div class="w-2 h-2 bg-brand rounded-full mr-4"></div>
+                        <h3 class="text-lg font-semibold text-dark-700" 
+                            th:text="${#temporals.format(monthGroup.date, 'M月')}">
+                            1月
+                        </h3>
+                        <span class="ml-2 text-sm text-dark-500" 
+                              th:text="'(' + ${monthGroup.postCount} + ' 篇)'">
+                            (0 篇)
+                        </span>
+                        <div class="flex-1 h-px bg-dark-200 ml-4"></div>
+                    </div>
+                    
+                    <!-- 文章列表 -->
+                    <div class="ml-6 space-y-3">
+                        <article th:each="post : ${monthGroup.posts}" 
+                                 class="group flex items-start space-x-4 p-4 bg-dark-100 rounded-xl hover:bg-dark-200 transition-all duration-200">
+                            
+                            <!-- 日期 -->
+                            <div class="flex-shrink-0 w-12 text-center">
+                                <div class="text-lg font-bold text-dark-800" 
+                                     th:text="${#temporals.format(post.spec.publishTime, 'd')}">
+                                    01
+                                </div>
+                                <div class="text-xs text-dark-500" 
+                                     th:text="${#temporals.format(post.spec.publishTime, 'EEE')}">
+                                    周一
+                                </div>
+                            </div>
+                            
+                            <!-- 文章信息 -->
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-lg font-medium text-dark-800 group-hover:text-accent transition-colors duration-200 line-clamp-1">
+                                    <a th:href="@{'/posts/' + ${post.status.slug}}" 
+                                       th:text="${post.spec.title}">
+                                        文章标题
+                                    </a>
+                                </h4>
+                                
+                                <!-- 文章元信息 -->
+                                <div class="flex items-center space-x-4 mt-2 text-sm text-dark-500">
+                                    <!-- 分类 -->
+                                    <div th:if="${post.categories}" class="flex space-x-1">
+                                        <a th:each="category : ${post.categories}" 
+                                           th:href="@{'/categories/' + ${category.metadata.name}}"
+                                           th:text="'[' + ${category.spec.displayName} + ']'"
+                                           class="hover:text-accent transition-colors duration-200">
+                                            [分类]
+                                        </a>
+                                    </div>
+                                    
+                                    <!-- 统计信息 -->
+                                    <div class="flex items-center space-x-3">
+                                        <span class="flex items-center space-x-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                            <span th:text="${post.status.visit ?: 0}">0</span>
+                                        </span>
+                                        
+                                        <span class="flex items-center space-x-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                            </svg>
+                                            <span th:text="${post.status.like ?: 0}">0</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <!-- 摘要 -->
+                                <p th:if="${post.status.excerpt}" 
+                                   class="mt-2 text-sm text-dark-600 line-clamp-2 leading-relaxed"
+                                   th:text="${post.status.excerpt}">
+                                    文章摘要...
+                                </p>
+                            </div>
+                            
+                            <!-- 文章封面（小图） -->
+                            <div th:if="${post.spec.cover}" 
+                                 class="flex-shrink-0 w-16 h-16">
+                                <img th:src="${post.spec.cover}" 
+                                     th:alt="${post.spec.title}"
+                                     class="w-full h-full object-cover rounded-lg">
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 年度统计图表 -->
+    <div class="mt-16 p-6 bg-dark-100 rounded-2xl">
+        <h2 class="text-xl font-semibold text-dark-800 mb-6">年度发布统计</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- 月度发布数量 -->
+            <div class="space-y-3">
+                <h3 class="font-medium text-dark-700">月度发布数量</h3>
+                <div class="space-y-2">
+                    <div th:each="monthStat : ${archives.monthlyStats}" 
+                         class="flex items-center space-x-3">
+                        <div class="w-8 text-sm text-dark-500" 
+                             th:text="${monthStat.month}">1月</div>
+                        <div class="flex-1 bg-dark-200 rounded-full h-2 overflow-hidden">
+                            <div class="bg-accent h-full transition-all duration-500" 
+                                 th:style="|width: ${monthStat.percentage}%|"></div>
+                        </div>
+                        <div class="w-8 text-sm text-dark-600" 
+                             th:text="${monthStat.count}">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 年度趋势 -->
+            <div class="space-y-3">
+                <h3 class="font-medium text-dark-700">年度趋势</h3>
+                <div class="space-y-2">
+                    <div th:each="yearStat : ${archives.yearlyStats}" 
+                         class="flex items-center justify-between p-3 bg-dark-50 rounded-lg">
+                        <span class="font-medium text-dark-800" th:text="${yearStat.year}">2024</span>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm text-dark-500" th:text="${yearStat.count} + ' 篇'">0 篇</span>
+                            <div class="flex items-center space-x-1 text-xs text-dark-400">
+                                <span th:if="${yearStat.growth > 0}" class="text-accent">
+                                    ↑ <span th:text="${yearStat.growth} + '%'">0%</span>
+                                </span>
+                                <span th:if="${yearStat.growth < 0}" class="text-danger">
+                                    ↓ <span th:text="${-yearStat.growth} + '%'">0%</span>
+                                </span>
+                                <span th:if="${yearStat.growth == 0}" class="text-dark-500">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 无文章状态 -->
+    <div th:if="${archives.totalPosts == 0}" 
+         class="text-center py-16">
+        <div class="w-24 h-24 mx-auto mb-6 text-dark-300">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-full h-full">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" 
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+        </div>
+        <h2 class="text-xl font-medium text-dark-700 mb-2">暂无归档</h2>
+        <p class="text-dark-500">还没有发布任何文章</p>
+    </div>
+</th:block>
+
+<!-- 页面脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 统计图表动画
+    const progressBars = document.querySelectorAll('.bg-accent.h-full');
+    progressBars.forEach((bar, index) => {
+        setTimeout(() => {
+            bar.style.transform = 'scaleX(1)';
+        }, index * 100);
+    });
+    
+    // 时间线滚动指示器
+    const yearHeaders = document.querySelectorAll('.timeline-year .sticky');
+    
+    const updateActiveYear = () => {
+        let activeYear = null;
+        
+        yearHeaders.forEach(header => {
+            const rect = header.getBoundingClientRect();
+            if (rect.top <= 100 && rect.bottom >= 100) {
+                activeYear = header;
+            }
+        });
+        
+        yearHeaders.forEach(header => {
+            if (header === activeYear) {
+                header.querySelector('div').classList.add('ring-2', 'ring-accent');
+            } else {
+                header.querySelector('div').classList.remove('ring-2', 'ring-accent');
+            }
+        });
+    };
+    
+    window.addEventListener('scroll', AkinaZZZ?.utils?.throttle(updateActiveYear, 100) || updateActiveYear);
+    updateActiveYear();
+});
+</script>
+
+</html>

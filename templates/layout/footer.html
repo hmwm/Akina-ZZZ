@@ -1,0 +1,210 @@
+<!-- 
+    页面底部组件
+    包含版权信息、链接、统计等
+-->
+<footer th:fragment="footer" 
+        class="mt-12 border-t border-dark-200 bg-dark-50/50">
+    
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            
+            <!-- 站点信息 -->
+            <div class="md:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <img th:if="${site.logo}" 
+                         th:src="${site.logo}" 
+                         th:alt="${site.title}"
+                         class="h-8 w-auto">
+                    <h3 th:text="${site.title}" 
+                        class="text-lg font-bold text-dark-800">
+                        Akina ZZZ
+                    </h3>
+                </div>
+                
+                <p th:text="${site.subtitle}" 
+                   class="text-dark-500 mb-4 leading-relaxed">
+                   深色系瀑布流主题，专为内容展示和交互优化设计
+                </p>
+                
+                <!-- 社交链接 -->
+                <div class="flex items-center space-x-4">
+                    <a th:each="social : ${@themeService.getSocialLinks()}"
+                       th:href="${social.url}"
+                       th:title="${social.name}"
+                       class="w-10 h-10 flex items-center justify-center rounded-full bg-dark-100 hover:bg-dark-200 text-dark-600 hover:text-dark-800 transition-all duration-200"
+                       target="_blank" 
+                       rel="noopener noreferrer">
+                        <span th:switch="${social.type}">
+                            <!-- GitHub -->
+                            <svg th:case="'github'" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                            
+                            <!-- Twitter -->
+                            <svg th:case="'twitter'" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                            
+                            <!-- Email -->
+                            <svg th:case="'email'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            
+                            <!-- RSS -->
+                            <svg th:case="'rss'" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-3.368c10.58.046 19.152 8.594 19.183 19.188h4.817c-.03-13.231-10.755-23.954-24-24v4.812z"/>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 快速链接 -->
+            <div>
+                <h4 class="text-sm font-semibold text-dark-700 uppercase tracking-wider mb-4">
+                    快速链接
+                </h4>
+                <ul class="space-y-2">
+                    <li>
+                        <a th:href="@{/}" 
+                           class="text-dark-500 hover:text-dark-700 transition-colors duration-200">
+                            首页
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/archives}" 
+                           class="text-dark-500 hover:text-dark-700 transition-colors duration-200">
+                            归档
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/categories}" 
+                           class="text-dark-500 hover:text-dark-700 transition-colors duration-200">
+                            分类
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/tags}" 
+                           class="text-dark-500 hover:text-dark-700 transition-colors duration-200">
+                            标签
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/about}" 
+                           class="text-dark-500 hover:text-dark-700 transition-colors duration-200">
+                            关于
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 主题信息 -->
+            <div>
+                <h4 class="text-sm font-semibold text-dark-700 uppercase tracking-wider mb-4">
+                    主题信息
+                </h4>
+                <ul class="space-y-2">
+                    <li>
+                        <span class="text-dark-500">
+                            版本: <span class="text-dark-700 font-mono text-sm">v1.0.0</span>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="text-dark-500">
+                            构建: <span class="text-dark-700 font-mono text-sm" th:text="${@themeService.getBuildTime()}">2024-01-01</span>
+                        </span>
+                    </li>
+                    <li>
+                        <a href="https://github.com/halo-dev/akina-zzz" 
+                           class="text-dark-500 hover:text-dark-700 transition-colors duration-200"
+                           target="_blank" 
+                           rel="noopener noreferrer">
+                            源码仓库
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://docs.halo.run" 
+                           class="text-dark-500 hover:text-dark-700 transition-colors duration-200"
+                           target="_blank" 
+                           rel="noopener noreferrer">
+                            文档支持
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 底部版权信息 -->
+        <div class="mt-8 pt-8 border-t border-dark-200">
+            <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                
+                <!-- 版权声明 -->
+                <div class="flex items-center space-x-4 text-sm text-dark-500">
+                    <span>
+                        &copy; <span th:text="${#dates.year(#dates.createNow())}">2024</span>
+                        <span th:text="${site.title}">Akina ZZZ</span>
+                        保留所有权利
+                    </span>
+                    
+                    <!-- ICP备案号 -->
+                    <span th:if="${@themeService.getSetting('icpNumber')}"
+                          th:text="|ICP备案号: ${@themeService.getSetting('icpNumber')}|">
+                    </span>
+                </div>
+                
+                <!-- 技术支持 -->
+                <div class="flex items-center space-x-4 text-sm text-dark-500">
+                    <span>Powered by</span>
+                    <a href="https://halo.run" 
+                       class="hover:text-dark-700 transition-colors duration-200"
+                       target="_blank" 
+                       rel="noopener noreferrer">
+                        Halo
+                    </a>
+                    <span>•</span>
+                    <a href="#" 
+                       class="hover:text-dark-700 transition-colors duration-200">
+                        Akina ZZZ Theme
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 性能指标（仅开发环境显示） -->
+    <div th:if="${@themeService.isDevelopmentMode()}" 
+         class="bg-dark-0 border-t border-dark-200 py-2">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center space-x-6 text-xs text-dark-500 font-mono">
+                <span id="page-load-time">加载时间: --ms</span>
+                <span id="dom-nodes">DOM节点: --</span>
+                <span id="memory-usage">内存使用: --MB</span>
+                <span>主题: Akina ZZZ v1.0.0</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 底部性能监控脚本 -->
+<script th:if="${@themeService.isDevelopmentMode()}">
+(function() {
+    // 页面加载完成后显示性能指标
+    window.addEventListener('load', () => {
+        // 页面加载时间
+        const loadTime = Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart);
+        document.getElementById('page-load-time').textContent = `加载时间: ${loadTime}ms`;
+        
+        // DOM节点数量
+        const domNodes = document.querySelectorAll('*').length;
+        document.getElementById('dom-nodes').textContent = `DOM节点: ${domNodes}`;
+        
+        // 内存使用情况（如果浏览器支持）
+        if (performance.memory) {
+            const memoryMB = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+            document.getElementById('memory-usage').textContent = `内存使用: ${memoryMB}MB`;
+        } else {
+            document.getElementById('memory-usage').textContent = `内存使用: N/A`;
+        }
+    });
+})();
+</script>

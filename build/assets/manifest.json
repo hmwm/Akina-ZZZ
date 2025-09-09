@@ -1,0 +1,17 @@
+{
+  "name": "akina-zzz",
+  "version": "1.0.0",
+  "built": "2025-09-09T19:48:52.482Z",
+  "assets": {
+    "css": "css/style.css",
+    "js": "js/bundle.js",
+    "jsModules": [
+      "js/main.js",
+      "js/masonry.js",
+      "js/modal.js",
+      "js/infinite.js",
+      "js/like.js",
+      "js/tabs.js"
+    ]
+  }
+}
