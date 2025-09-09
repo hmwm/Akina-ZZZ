@@ -4,7 +4,7 @@
       th:replace="~{layout/base :: html(
         siteTitle=${site.title + ' - ' + (site.subtitle ?: '深色系瀑布流主题')},
         metaDescription=${site.subtitle ?: '深色系瀑布流主题，专为内容展示和交互优化设计'},
-        metaKeywords=${site.keywords ?: 'Halo,博客,主题,瀑布流'},
+        metaKeywords=${site.seo.keywords ?: 'Halo,博客,主题,瀑布流'},
         metaImage=${site.logo ?: '/themes/akina-zzz/assets/img/og-image.png'},
         bodyClass='index-page',
         contentFragment=~{:: content}

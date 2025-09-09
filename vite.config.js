@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
   root: '.',
@@ -8,14 +9,14 @@ export default defineConfig({
     rollupOptions: {
       input: {
         // CSS入口
-        style: resolve(__dirname, 'assets/css/tailwind.css'),
+        style: resolve(fileURLToPath(new URL('.', import.meta.url)), 'assets/css/tailwind.css'),
         // JS入口 - 分包处理
-        main: resolve(__dirname, 'assets/js/main.js'),
-        masonry: resolve(__dirname, 'assets/js/masonry.js'),
-        modal: resolve(__dirname, 'assets/js/modal.js'),
-        tabs: resolve(__dirname, 'assets/js/tabs.js'),
-        like: resolve(__dirname, 'assets/js/like.js'),
-        infinite: resolve(__dirname, 'assets/js/infinite.js')
+        main: resolve(fileURLToPath(new URL('.', import.meta.url)), 'assets/js/main.js'),
+        masonry: resolve(fileURLToPath(new URL('.', import.meta.url)), 'assets/js/masonry.js'),
+        modal: resolve(fileURLToPath(new URL('.', import.meta.url)), 'assets/js/modal.js'),
+        tabs: resolve(fileURLToPath(new URL('.', import.meta.url)), 'assets/js/tabs.js'),
+        like: resolve(fileURLToPath(new URL('.', import.meta.url)), 'assets/js/like.js'),
+        infinite: resolve(fileURLToPath(new URL('.', import.meta.url)), 'assets/js/infinite.js')
       },
       output: {
         dir: 'assets',
@@ -53,7 +54,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'assets')
+      '@': resolve(fileURLToPath(new URL('.', import.meta.url)), 'assets')
     }
   }
 });
