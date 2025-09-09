@@ -5,11 +5,11 @@ metadata:
 spec:
   displayName: Akina ZZZ
   author:
-    name: AI Agent
-    website: https://github.com/halo-dev
+    name: hmwm
+    website: https://github.com/hmwm
   description: 深色系瀑布流主题，专为内容展示和交互优化设计
-  homepage: https://github.com/halo-dev/akina-zzz
-  repo: https://github.com/halo-dev/akina-zzz.git
+  homepage: https://github.com/hmwm/Akina-ZZZ
+  repo: https://github.com/hmwm/Akina-ZZZ.git
   settingsSchema: 
     openapi: 3.0.0
     info:

@@ -71,8 +71,8 @@ git clone https://github.com/halo-dev/akina-zzz.git
 
 ```bash
 # 克隆项目
-git clone https://github.com/halo-dev/akina-zzz.git
-cd akina-zzz
+git clone https://github.com/hmwm/Akina-ZZZ.git
+cd Akina-ZZZ
 
 # 安装依赖
 npm install
@@ -217,9 +217,9 @@ AkinaZZZ.events.on('theme:init', () => {
 
 如果您在使用过程中遇到问题，请：
 
-1. 查看 [常见问题](https://github.com/halo-dev/akina-zzz/wiki/FAQ)
-2. 搜索 [已有 Issues](https://github.com/halo-dev/akina-zzz/issues)
-3. 提交 [新的 Issue](https://github.com/halo-dev/akina-zzz/issues/new)
+1. 查看 [常见问题](https://github.com/hmwm/Akina-ZZZ/wiki/FAQ)
+2. 搜索 [已有 Issues](https://github.com/hmwm/Akina-ZZZ/issues)
+3. 提交 [新的 Issue](https://github.com/hmwm/Akina-ZZZ/issues/new)
 
 提交 Issue 时请提供：
 - Halo 版本
