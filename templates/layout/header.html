@@ -79,12 +79,12 @@
                 <div th:if="${@themeService.getSetting('showUserInfo')}" 
                      class="user-info hidden lg:flex">
                     <div class="user-avatar">
-                        <img th:src="${site.user?.avatar ?: '/themes/akina-zzz/assets/img/default-avatar.svg'}" 
-                             th:alt="${site.user?.displayName ?: '用户'}"
+                        <img th:src="${site.logo ?: '/themes/akina-zzz/assets/img/default-avatar.svg'}" 
+                             th:alt="${site.title ?: '用户'}"
                              class="w-full h-full object-cover">
                     </div>
                     <div class="flex flex-col">
-                        <span class="user-name" th:text="${site.user?.displayName ?: '访客'}">访客</span>
+                        <span class="user-name" th:text="${site.title ?: '访客'}">访客</span>
                         <div class="flex items-center space-x-1">
                             <div class="w-12 h-1.5 bg-dark-200 rounded-full overflow-hidden">
                                 <div class="h-full bg-accent transition-all duration-300" 
